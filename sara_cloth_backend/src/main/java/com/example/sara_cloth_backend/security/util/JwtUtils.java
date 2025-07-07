@@ -33,6 +33,7 @@ public class JwtUtils {
         String role = userPrincipal.getAuthorities().stream()
                 .findFirst()
                 .map(GrantedAuthority::getAuthority)
+                .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
                 .orElse("");
 
         return Jwts.builder()
@@ -71,7 +72,7 @@ public class JwtUtils {
 
     public SimpleGrantedAuthority extractAuthorities(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
-        return new SimpleGrantedAuthority(claims.get("role", String.class));
+        return new SimpleGrantedAuthority("ROLE_"+claims.get("role", String.class));
     }
 
 }
