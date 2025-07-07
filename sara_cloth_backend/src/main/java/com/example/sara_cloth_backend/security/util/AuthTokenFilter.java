@@ -39,13 +39,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (jwt != null && jwtUtils.validateToken(jwt)) {
                 String username = jwtUtils.extractUsername(jwt);
 
-                SimpleGrantedAuthority authority = jwtUtils.extractAuthorities(jwt);
+//                SimpleGrantedAuthority authority = jwtUtils.extractAuthorities(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
                         null,
-                        Collections.singletonList(authority));
+//                        Collections.singletonList(authority)
+                        userDetails.getAuthorities()
+                );
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 

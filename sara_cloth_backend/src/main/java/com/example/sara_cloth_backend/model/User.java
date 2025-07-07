@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -36,9 +38,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(nullable = false, columnDefinition = "VARCHAR(10) default 'USER'")
     @Enumerated(EnumType.STRING)
-    private Role authority = Role.USER;
+    private Set<Role> authorities = new HashSet<>();
 
     @Column(nullable = false, updatable = false)
     private Date createdAt;

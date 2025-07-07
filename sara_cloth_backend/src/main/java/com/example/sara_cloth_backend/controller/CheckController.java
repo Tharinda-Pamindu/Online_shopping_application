@@ -15,13 +15,13 @@ public class CheckController {
     }
 
     @GetMapping("/admin/check")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> admin() {
         return ResponseEntity.ok().body(new Response("This is an admin check"));
     }
 
     @GetMapping("/user/check")
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> user() {
         return ResponseEntity.ok().body(new Response("This is a user check"));
     }

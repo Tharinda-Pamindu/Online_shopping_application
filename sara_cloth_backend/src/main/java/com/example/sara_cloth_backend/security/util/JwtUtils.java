@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtils {
@@ -30,14 +32,20 @@ public class JwtUtils {
 
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 
-        String role = userPrincipal.getAuthorities().stream()
-                .findFirst()
+//        String role = userPrincipal.getAuthorities().stream()
+//                .findFirst()
+//                .map(GrantedAuthority::getAuthority)
+//                .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
+//                .orElse("");
+
+        List<String> roles = userPrincipal.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .orElse("");
+                .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
+                .toList();
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
-                .claim("role", role)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + jwtExpiration))
                 .setIssuer("SARA")
@@ -69,9 +77,15 @@ public class JwtUtils {
         return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
-    public SimpleGrantedAuthority extractAuthorities(String token) {
+    public List<SimpleGrantedAuthority> extractAuthorities(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
-        return new SimpleGrantedAuthority(claims.get("role", String.class));
+
+        List<String> roles = claims.get("roles", List.class);
+
+//        return new SimpleGrantedAuthority("ROLE_" + claims.get("roles", String.class));
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                .collect(Collectors.toList());
     }
 
 }
