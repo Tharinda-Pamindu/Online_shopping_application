@@ -21,7 +21,7 @@ public class CheckController {
     }
 
     @GetMapping("/user/check")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> user() {
         return ResponseEntity.ok().body(new Response("This is a user check"));
     }
