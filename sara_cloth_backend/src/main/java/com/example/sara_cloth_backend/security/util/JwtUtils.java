@@ -33,7 +33,7 @@ public class JwtUtils {
         String role = userPrincipal.getAuthorities().stream()
                 .findFirst()
                 .map(GrantedAuthority::getAuthority)
-                .orElse("USER");
+                .orElse("");
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
@@ -51,7 +51,7 @@ public class JwtUtils {
 
     public Boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJwt(token);
+            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token);
             return true;
         } catch (MalformedJwtException e) {
             LOGGER.error("Invalid JWT token {} ", e.getMessage());
@@ -66,12 +66,11 @@ public class JwtUtils {
     }
 
     public String extractUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJwt(token).getBody().getSubject();
+        return Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public SimpleGrantedAuthority extractAuthorities(String token) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJwt(token).getBody();
-
+        Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
         return new SimpleGrantedAuthority(claims.get("role", String.class));
     }
 
