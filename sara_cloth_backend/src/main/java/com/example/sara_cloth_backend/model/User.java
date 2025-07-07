@@ -1,6 +1,7 @@
 package com.example.sara_cloth_backend.model;
 
 import com.example.sara_cloth_backend.model.embed.Address;
+import com.example.sara_cloth_backend.model.util.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,9 +54,5 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         lastUpdated = Instant.now();
-    }
-
-    public enum Role {
-        USER, ADMIN
     }
 }
