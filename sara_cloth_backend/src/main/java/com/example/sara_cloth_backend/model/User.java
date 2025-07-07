@@ -1,10 +1,12 @@
 package com.example.sara_cloth_backend.model;
 
 import com.example.sara_cloth_backend.model.embed.Address;
+import com.example.sara_cloth_backend.model.util.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 @Entity
@@ -39,23 +41,19 @@ public class User {
     private Role authority = Role.USER;
 
     @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    private Date createdAt;
 
     @Column(nullable = false)
-    private Instant lastUpdated;
+    private Date lastUpdated;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = Instant.now();
-        lastUpdated = Instant.now();
+        createdAt = new Date();
+        lastUpdated = new Date();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        lastUpdated = Instant.now();
-    }
-
-    public enum Role {
-        USER, ADMIN
+        lastUpdated = new Date();
     }
 }
