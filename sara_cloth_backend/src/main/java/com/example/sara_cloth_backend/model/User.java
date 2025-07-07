@@ -1,0 +1,61 @@
+package com.example.sara_cloth_backend.model;
+
+import com.example.sara_cloth_backend.model.embed.Address;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.Instant;
+import java.util.UUID;
+
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Embedded
+    private Address address;
+
+    @Column(nullable = false, unique = true)
+    private String phone;
+
+    @Column(nullable = false, columnDefinition = "VARCHAR(10) default 'USER'")
+    @Enumerated(EnumType.STRING)
+    private Role authority = Role.USER;
+
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @Column(nullable = false)
+    private Instant lastUpdated;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+        lastUpdated = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdated = Instant.now();
+    }
+
+    public enum Role {
+        USER, ADMIN
+    }
+}
